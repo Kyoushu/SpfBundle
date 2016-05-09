@@ -1,22 +1,18 @@
 {
   "name": "kyoushu/spf-bundle",
-  "description": "",
+  "description": "A bundle for building pages ustilising SPF",
   "type": "symfony-bundle",
-  "license": "proprietary",
+  "license": "MIT",
   "authors": [
     {
       "name": "James Willans",
-      "email": "james.willans@accordgroup.co.uk"
+      "email": "kyoushu@gmail.com"
     }
   ],
   "require": {
     "php": ">=5.3.3",
     "symfony/framework-bundle": ">=2.3",
-    "symfony/twig-bundle": ">=2.3",
-    "doctrine/doctrine-bundle": "~1.5",
-    "doctrine/orm": "~2.5",
-    "symfony/validator": "~2.3",
-    "symfony/form": "~2.3"
+    "symfony/twig-bundle": ">=2.3"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.5",

@@ -1,5 +1,7 @@
 # Kyoushu/SpfBundle
 
+A bundle for building pages utilising [SPF](http://youtube.github.io/spfjs/)
+
 ## Usage Example
 
 Extend your controller with \Kyoushu\SpfBundle\Controller\SpfController
