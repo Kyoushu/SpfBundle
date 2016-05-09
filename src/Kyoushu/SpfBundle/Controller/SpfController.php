@@ -4,11 +4,16 @@ namespace Kyoushu\SpfBundle\Controller;
 
 use Kyoushu\SpfBundle\Templating\Fragment;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SpfController extends Controller
 {
+
+    const SPF_QUERY_NAVIGATE = 'navigate';
+    const SPF_QUERY_NAVIGATE_BACK = 'navigate-back';
+    const SPF_QUERY_NAVIGATE_FORWARD = 'navigate-forward';
 
     /**
      * @return null|Request
@@ -22,10 +27,19 @@ abstract class SpfController extends Controller
      * @param Request $request
      * @return bool
      */
-    protected function isNavigateRequest(Request $request)
+    private function isNavigateRequest(Request $request)
     {
         if(!$request->query->has('spf')) return false;
-        return $request->query->get('spf') === 'navigate';
+        $value = $request->query->get('spf');
+        return in_array($value, array(self::SPF_QUERY_NAVIGATE, self::SPF_QUERY_NAVIGATE_BACK, self::SPF_QUERY_NAVIGATE_FORWARD));
+    }
+
+    /**
+     * @return Fragment[]
+     */
+    private function getDefaultFragments()
+    {
+        return $this->get('kyoushu_spf.default_fragment_registry')->all();
     }
 
     /**
@@ -46,25 +60,15 @@ abstract class SpfController extends Controller
 
             if($response === null) $response = new Response();
 
-            $data = array(
-                'head' => '',
-                'body' => array(),
-                'foot' => ''
-            );
-
+            $data = array();
             $twig = $this->get('twig');
+            
+            foreach($this->getDefaultFragments() as $fragment){
+                $data = $fragment->mergeResponseData($data, $twig, $view, $parameters);
+            }
 
             foreach($fragments as $fragment){
-                $type = $fragment->getType();
-                $html = $fragment->render($twig, $view, $parameters);
-
-                if($fragment->getType() === Fragment::TYPE_BODY){
-                    $data['body'][$fragment->getBlockName()] = $html;
-                }
-                else{
-                    if(!isset($data[$type])) $data[$type] = '';
-                    $data[$type] .= $html;
-                }
+                $data = $fragment->mergeResponseData($data, $twig, $view, $parameters);
             }
 
             $response->setContent(json_encode($data, JSON_PRETTY_PRINT));

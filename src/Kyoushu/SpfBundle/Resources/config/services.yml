@@ -1,0 +1,4 @@
+services:
+
+    kyoushu_spf.default_fragment_registry:
+        class: Kyoushu\SpfBundle\Templating\FragmentRegistry
